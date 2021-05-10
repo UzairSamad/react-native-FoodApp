@@ -1,4 +1,4 @@
-const baseUrl = 'https://minisolution-backend.herokuapp.com'
+const baseUrl = 'http://sfreshveg.apishub.xyz'
 // clientAuthenticationbeforelogin
 export const authenticateClientBeforeLogin = `${baseUrl}/authenticate`;
 
@@ -8,8 +8,8 @@ export const user_login = `${baseUrl}/foodmanager/loginUser`;
 
 
 // food_diet apis
-export const add_diet = `${baseUrl}/foodmanager/addDiet`
-export const get_diet = `${baseUrl}/foodmanager/getDiet`
+export const add_diet = `${baseUrl}/foodmanager/addDiet`;
+export const get_diet = `${baseUrl}/foodmanager/getDiet`;
 
 
 

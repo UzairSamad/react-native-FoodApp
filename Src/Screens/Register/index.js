@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from 'react';
 import {
   View,
@@ -23,22 +24,22 @@ class Register extends Component {
     };
   }
   render() {
-    const { email, password,c_password } = this.state
+    const { email, password, c_password } = this.state
 
     const handleRegister = async () => {
-      let data = { email, password, c_password }
       if (email == '' || password == '') {
         alert('Email and password is required')
       } else if (password !== c_password) {
         alert('Password and Confirm Password should be same')
       }
       else {
+        let data = { email, password };
         try {
           let res = await createResource(user_register, data);
-          console.log(res, 'resresres')
-          this.props.navigation.navigate('NewEntry')
+          console.log(res, 'resresres');
+          this.props.navigation.navigate('Login');
         } catch (error) {
-          alert('err')
+          alert(error);
         }
       }
 
@@ -51,7 +52,7 @@ class Register extends Component {
             <Text style={Styles.headerText1}>Register YourSelf</Text>
 
             <View style={Styles.mainInputWrapper}>
-              <Text style={Styles.inputText}>User name</Text>
+              <Text style={Styles.inputText}>Email</Text>
               <TextInput
                 style={Styles.input}
                 value={this.state.email}

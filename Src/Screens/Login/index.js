@@ -1,16 +1,13 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
-  ScrollView,
-  Image,
-  ImageBackground,
-  TextInput
+  TextInput,
 } from 'react-native';
 import Styles from './Styles';
-import Images from '../../Styles/Images';
 import { createResource } from '../../WebApiServices/SimpleApiCalls'
 import { user_login } from '../../WebApiServices/WebServices'
 
@@ -20,7 +17,7 @@ class Login extends Component {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
     };
   }
   render() {
@@ -28,15 +25,15 @@ class Login extends Component {
 
     const handleLogin = async () => {
       let data = { email, password }
-      if (email =='' || password == '') {
-        alert('Email and password is required')
+      if (email === '' || password === '') {
+        alert('Email and password is required');
       } else {
         try {
           let res = await createResource(user_login, data);
-          console.log(res, 'resresres')
-          // this.props.navigation.navigate('NewEntry')
+          console.log(res, 'resresres');
+          this.props.navigation.navigate('NewEntry');
         } catch (error) {
-          alert('err')
+          alert(error);
         }
       }
 

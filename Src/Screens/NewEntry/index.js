@@ -1,3 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable no-alert */
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
   View,
@@ -5,50 +8,75 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Image,
-  ImageBackground,
-  TextInput
+  TextInput,
 } from 'react-native';
 import Styles from './Styles';
 import Colors from '../../Styles/Colors';
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
-
+import { createResource, getResource } from '../../WebApiServices/SimpleApiCalls';
+import { add_diet, get_diet } from '../../WebApiServices/WebServices';
 class NewEntry extends Component {
   constructor(props) {
     super(props);
     this.state = {
       userName: '',
-      password: '',
-      c_password: '',
+      consumedCalorie: '',
       changed: 0,
-      language: '',
+      foodType: '',
+      description: '',
       date: '09-10-2020',
-      showEntry: false
+      showEntry: false,
+      foodData: [],
     };
   }
-  changedValues = (value) => {
-    this.setState({ changed: value })
+
+  changedValues = async (value) => {
+    this.setState({ changed: value });
+    if (value === 1) {
+      try {
+        let res = await getResource(get_diet);
+        console.log(res.data, 'resDiet-->');
+        this.setState({ foodData: res.data });
+        console.log('foodData-->', this.state.foodData);
+      } catch (error) {
+        alert('Cannot Find data');
+      }
+    }
+
   }
 
   handleChangeFlag = (selectedOption) => {
-    this.setState({ language: selectedOption })
+    this.setState({ foodType: selectedOption });
   }
   entryDetails = () => {
-    this.setState({ showEntry: !this.state.showEntry })
+    this.setState({ showEntry: !this.state.showEntry });
   }
-
 
 
   render() {
-    const { changed, date, showEntry } = this.state;
+    const { changed, date, showEntry, description, foodType, consumedCalorie, foodData } = this.state;
+
+    const handleSubmit = async () => {
+      if (foodType === '' || consumedCalorie === '' || foodType === '' || description === '') {
+        alert('cannot submit empty fields');
+      } else {
+        let data = { foodType, description, date, consumedCalorie };
+        try {
+          let res = await createResource(add_diet, data);
+          console.log(res, 'resDiet-->');
+        } catch (error) {
+          alert('Invalid data');
+        }
+      }
+    };
 
     const Language = [
       'Breakfast',
       'Lunch',
       'Dinner',
-      'Snaks',
-    ]
+      'Snacks',
+    ];
 
     return (
       <>
@@ -59,14 +87,14 @@ class NewEntry extends Component {
               <View style={Styles.headerContainer}>
                 <TouchableOpacity style={{
                   backgroundColor: changed == 0 ? Colors.ok : Colors.White,
-                  width: "30%",
+                  width: '30%',
                   borderRightWidth: 2,
                 }}
                   onPress={() => this.changedValues(0)}
                 >
                   <View style={{
                     margin: 5,
-                    width: "100%",
+                    width: '100%',
                   }}>
 
                     <Text style={Styles.buttonText}>New Entry</Text>
@@ -74,14 +102,14 @@ class NewEntry extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                   backgroundColor: changed == 1 ? Colors.ok : Colors.White,
-                  width: "40%",
+                  width: '40%',
                   borderRightWidth: 2,
                 }}
                   onPress={() => this.changedValues(1)}
                 >
                   <View style={{
                     margin: 5,
-                    width: "100%",
+                    width: '100%',
                   }}>
                     <Text style={Styles.buttonText}>Search Entries</Text>
                   </View>
@@ -89,14 +117,14 @@ class NewEntry extends Component {
 
                 <TouchableOpacity style={{
                   backgroundColor: changed == 2 ? Colors.ok : Colors.White,
-                  width: "30%",
+                  width: '30%',
                   borderRightWidth: 2,
                 }}
-                  onPress={() => { this.props.navigation.navigate('Login') }}
+                  onPress={() => { this.props.navigation.navigate('Login'); }}
                 >
                   <View style={{
                     margin: 5,
-                    width: "100%",
+                    width: '100%',
                   }}>
                     <Text style={[Styles.buttonText, { marginLeft: 10 }]}>Logout</Text>
                   </View>
@@ -107,11 +135,11 @@ class NewEntry extends Component {
 
               <Text style={Styles.headerText}>Food Manager App</Text>
               {
-                changed == 0 &&
+                changed === 0 &&
                 <Text style={Styles.headerText1}>Enter Intake Information</Text>
               }
               {
-                changed == 1 ?
+                changed === 1 ?
                   showEntry ?
                     <Text style={Styles.headerText1}>Entry's Detail</Text> :
                     <Text style={Styles.headerText1}>Search Entries</Text>
@@ -119,7 +147,7 @@ class NewEntry extends Component {
                   <Text style={Styles.headerText1}>Search Entries</Text>
               }
               {
-                changed == 0 &&
+                changed === 0 &&
 
                 <View style={Styles.mainInputWrapper}>
                   {/* 1st */}
@@ -154,7 +182,7 @@ class NewEntry extends Component {
                       marginTop: 3,
                       borderWidth: 1,
                       borderColor: '#e0e4e5',
-                      maxHeight: 70
+                      maxHeight: 70,
                     }}
                     onSelect={(index, value) => this.handleChangeFlag(value)}
                     options={Language}
@@ -163,10 +191,10 @@ class NewEntry extends Component {
                   <Text style={Styles.inputText2}>Food Description</Text>
                   <TextInput
                     style={Styles.input2}
-                    value={this.state.foodDescription}
+                    value={this.state.description}
                     multiline={true}
                     numberOfLines={4}
-                    onChangeText={text => this.setState({ foodDescription: text })}
+                    onChangeText={text => this.setState({ description: text })}
                   />
                   {/* 3rd */}
                   <Text style={Styles.inputText1}>Date of Intake</Text>
@@ -175,16 +203,17 @@ class NewEntry extends Component {
                     date={date} // Initial date from state
                     mode="date" // The enum of date, datetime and time
                     placeholder="select date"
+                    value={this.state.date}
                     format="DD-MM-YYYY"
                     minDate="01-01-2016"
-                    maxDate="01-01-2019"
+                    maxDate="01-12-2021"
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     customStyles={{
                       dateInput: {
                         borderWidth: 2,
                         borderColor: Colors.black,
-                        borderRadius: 8
+                        borderRadius: 8,
                       },
                       dateIcon: {
                         //display: 'none',
@@ -195,8 +224,8 @@ class NewEntry extends Component {
                       },
 
                     }}
-                    onDateChange={(date) => {
-                      setDate(date);
+                    onDateChange={() => {
+                      this.setState({ date: date });
                     }}
                   />
 
@@ -204,11 +233,11 @@ class NewEntry extends Component {
                   <Text style={Styles.inputText1}>Consumed Calorie</Text>
                   <TextInput
                     style={Styles.input}
-                    value={this.state.password}
-                    onChangeText={text => this.setState({ password: text })}
+                    value={this.state.consumedCalorie}
+                    onChangeText={text => this.setState({ consumedCalorie: text })}
                   />
 
-                  <TouchableOpacity onPress={() => { this.props.navigation.navigate('') }}>
+                  <TouchableOpacity onPress={() => handleSubmit()}>
                     <View style={Styles.button}>
                       <Text style={Styles.buttonTextSubmit}>Submit</Text>
                     </View>
@@ -216,7 +245,7 @@ class NewEntry extends Component {
                 </View>
               }
               {
-                changed == 1 ?
+                changed === 1 ?
                   showEntry ?
                     <View style={Styles.mainInputWrapper}>
                       <View style={Styles.entryContainer}>
@@ -230,7 +259,7 @@ class NewEntry extends Component {
                           <Text style={Styles.entryTextDescription}>Use sensory words – such as “fiery,” ”savory” and “crispy” – to describe your dishes. People are driven by their senses, and by using simple yet tantalizing terms that speak to the each of the five senses, you paint a clear picture of what diners can expect from the dish.</Text>
 
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('') }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate(''); }}>
                           <View style={[Styles.button, { marginRight: 10 }]}>
                             <Text style={Styles.buttonTextSubmit}>Share</Text>
                           </View>
@@ -243,51 +272,68 @@ class NewEntry extends Component {
 
                     </View>
                     :
-                    <View style={Styles.mainInputWrapper}>
-                      <TouchableOpacity onPress={() => this.entryDetails()}>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <View style={Styles.searchWrapper}>
-                          <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
-                        </View>
-                      </TouchableOpacity>
-
-                    </View> : null
+                    foodData ? <p>Hello</p>
+                      // foodData.map((val) => (
+                      // <TouchableOpacity onPress={() => this.entryDetails()}>
+                      //   <View style={Styles.searchWrapper}>
+                      //     <Text style={Styles.searchText}>calory:{val.consumed_calorie}</Text>
+                      //     <Text style={Styles.searchText1}>date:{val.date}</Text>
+                      //   </View>
+                      // </TouchableOpacity>
+                      // ))
+                      :
+                      <View style={Styles.mainInputWrapper}>
+                        <TouchableOpacity onPress={() => this.entryDetails()}>
+                          <View style={Styles.searchWrapper}>
+                            <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                            <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                  // };
+                  /* <TouchableOpacity onPress={() => this.entryDetails()}>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={Styles.searchWrapper}>
+                      <Text style={Styles.searchText}>Consumed Colory: 44</Text>
+                      <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                    </View>
+                  </TouchableOpacity> */
+                  : null
               }
             </View>
           </ScrollView>
