@@ -25,7 +25,7 @@ class Register extends Component {
   render() {
     const { email, password } = this.state
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
       let data = { email, password, c_password }
       if (email == '' || password == '') {
         alert('Email and password is required')
@@ -37,7 +37,7 @@ class Register extends Component {
         try {
           let res = await createResource(user_register, data);
           console.log(res, 'resresres')
-          // this.props.navigation.navigate('NewEntry')
+          this.props.navigation.navigate('NewEntry')
         } catch (error) {
           alert('err')
         }
@@ -73,7 +73,7 @@ class Register extends Component {
                 onChangeText={text => this.setState({ c_password: text })}
               />
 
-              <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEntry') }}>
+              <TouchableOpacity onPress={() => { handleRegister() }}>
                 <View style={Styles.button}>
                   <Text style={Styles.buttonText}>Submit</Text>
                 </View>
