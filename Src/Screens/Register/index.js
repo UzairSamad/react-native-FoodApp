@@ -23,7 +23,7 @@ class Register extends Component {
     };
   }
   render() {
-    const { email, password } = this.state
+    const { email, password,c_password } = this.state
 
     const handleRegister = async () => {
       let data = { email, password, c_password }
@@ -31,7 +31,6 @@ class Register extends Component {
         alert('Email and password is required')
       } else if (password !== c_password) {
         alert('Password and Confirm Password should be same')
-
       }
       else {
         try {
