@@ -11,16 +11,39 @@ import {
 } from 'react-native';
 import Styles from './Styles';
 import Images from '../../Styles/Images';
+import { createResource } from '../../WebApiServices/SimpleApiCalls'
+import { user_register } from '../../WebApiServices/WebServices'
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: '',
+      email: '',
       password: '',
       c_password: ''
     };
   }
   render() {
+    const { email, password } = this.state
+
+    const handleLogin = async () => {
+      let data = { email, password, c_password }
+      if (email == '' || password == '') {
+        alert('Email and password is required')
+      } else if (password !== c_password) {
+        alert('Password and Confirm Password should be same')
+
+      }
+      else {
+        try {
+          let res = await createResource(user_register, data);
+          console.log(res, 'resresres')
+          // this.props.navigation.navigate('NewEntry')
+        } catch (error) {
+          alert('err')
+        }
+      }
+
+    }
     return (
       <>
         <SafeAreaView style={Styles.safeViewStyle}>
@@ -32,8 +55,8 @@ class Register extends Component {
               <Text style={Styles.inputText}>User name</Text>
               <TextInput
                 style={Styles.input}
-                value={this.state.userName}
-                onChangeText={text => this.setState({ userName: text })}
+                value={this.state.email}
+                onChangeText={text => this.setState({ email: text })}
               />
 
               <Text style={Styles.inputText1}>Password</Text>
