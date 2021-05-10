@@ -25,14 +25,21 @@ class Login extends Component {
   }
   render() {
     const { email, password } = this.state
-    const handleLogin = async => {
+
+    const handleLogin = async () => {
       let data = { email, password }
-      try {
-        let res = await createResource(user_login, data);
-        console.log(res, 'resresres')
-      } catch (error) {
-        alert('err')
+      if (email =='' || password == '') {
+        alert('Email and password is required')
+      } else {
+        try {
+          let res = await createResource(user_login, data);
+          console.log(res, 'resresres')
+          // this.props.navigation.navigate('NewEntry')
+        } catch (error) {
+          alert('err')
+        }
       }
+
     }
     return (
       <>
@@ -55,7 +62,7 @@ class Login extends Component {
                 value={this.state.password}
                 onChangeText={text => this.setState({ password: text })}
               />
-              <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEntry') }}>
+              <TouchableOpacity onPress={() => handleLogin()}>
                 <View style={Styles.button}>
                   <Text style={Styles.buttonText}>Log In</Text>
                 </View>
