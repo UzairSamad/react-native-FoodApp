@@ -139,12 +139,8 @@ class NewEntry extends Component {
                 <Text style={Styles.headerText1}>Enter Intake Information</Text>
               }
               {
-                changed === 1 ?
-                  showEntry ?
-                    <Text style={Styles.headerText1}>Entry's Detail</Text> :
-                    <Text style={Styles.headerText1}>Search Entries</Text>
-                  :
-                  <Text style={Styles.headerText1}>Search Entries</Text>
+                changed === 1 && showEntry ? <Text style={Styles.headerText1}>Entry's Detail</Text>
+                  : <Text style={Styles.headerText1}>Search Entries</Text>
               }
               {
                 changed === 0 &&
@@ -272,15 +268,15 @@ class NewEntry extends Component {
 
                     </View>
                     :
-                    foodData ? <p>Hello</p>
-                      // foodData.map((val) => (
-                      // <TouchableOpacity onPress={() => this.entryDetails()}>
-                      //   <View style={Styles.searchWrapper}>
-                      //     <Text style={Styles.searchText}>calory:{val.consumed_calorie}</Text>
-                      //     <Text style={Styles.searchText1}>date:{val.date}</Text>
-                      //   </View>
-                      // </TouchableOpacity>
-                      // ))
+                    foodData ?
+                      foodData.map((val) => (
+                        <TouchableOpacity onPress={() => this.entryDetails()}>
+                          <View style={Styles.searchWrapper}>
+                            <Text style={Styles.searchText}>calory:{val.consumed_calorie}</Text>
+                            <Text style={Styles.searchText1}>date:{val.date}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      ))
                       :
                       <View style={Styles.mainInputWrapper}>
                         <TouchableOpacity onPress={() => this.entryDetails()}>
