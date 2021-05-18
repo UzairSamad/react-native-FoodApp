@@ -55,7 +55,7 @@ class Login extends Component {
       { token, parameters: PROFILE_REQUEST_PARAMS },
       (error, user) => {
         if (error) {
-          console.log('login info has error: ' + error);
+          // console.log('login info has error: ' + error);
         } else {
           // this.setState({ userInfo: user });
           console.log('resulttttttttttttttt:', user);
@@ -77,7 +77,9 @@ class Login extends Component {
 
     // Once signed in, get the users AccesToken
     const data = await AccessToken.getCurrentAccessToken();
-    this.getInfo(data.accessToken)
+    // alert(JSON.stringify(data.accessToken))
+    // this.getInfo(data.accessToken)
+    this.props.navigation.navigate('NewEntry');
     console.log(data, "DAAAAAAAAAAAAAAAAAAa");
     if (!data) {
       throw 'Something went wrong obtaining access token';
@@ -92,16 +94,16 @@ class Login extends Component {
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
-        alert('Cancel');
+        // alert('Cancel');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        alert('Signin in progress');
+        // alert('Signin in progress');
         // operation (f.e. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        alert('PLAY_SERVICES_NOT_AVAILABLE');
+        // alert('PLAY_SERVICES_NOT_AVAILABLE');
         // play services not available or outdated
       } else {
-        console.log(error, "OTHER ERRRRRRRRRRRRRRRRRR");
-        alert(JSON.stringify(error))
+        // console.log(error, "OTHER ERRRRRRRRRRRRRRRRRR");
+        // alert(JSON.stringify(error))
         // some other error happened
       }
     }
@@ -112,25 +114,25 @@ class Login extends Component {
     const { email, password } = this.state
 
     const handleLogin = async () => {
-      // this.props.navigation.navigate('NewEntry');
-      let data = { email, password }
-      if (email === '' || password === '') {
-        alert('Email and password is required');
-      } else {
-        this.setState({ ...this.state, isLoading: true })
+      this.props.navigation.navigate('NewEntry');
+      // let data = { email, password }
+      // if (email === '' || password === '') {
+      //   alert('Email and password is required');
+      // } else {
+      //   this.setState({ ...this.state, isLoading: true })
 
-        try {
-          let res = await createResource(user_login, data);
-          console.log(res, 'resresres');
-          this.props.navigation.navigate('NewEntry');
-          this.setState({ ...this.state, isLoading: false })
+      //   try {
+      //     let res = await createResource(user_login, data);
+      //     console.log(res, 'resresres');
+      //     this.props.navigation.navigate('NewEntry');
+      //     this.setState({ ...this.state, isLoading: false })
 
-        } catch (error) {
-          alert(error);
-          this.setState({ ...this.state, isLoading: false })
+      //   } catch (error) {
+      //     alert("ERRRRRRRRRRRRRR");
+      //     this.setState({ ...this.state, isLoading: false })
 
-        }
-      }
+      //   }
+      // }
     }
     return (
       <>
