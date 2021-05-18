@@ -5,7 +5,7 @@ import axios from 'axios';
 const createResource = (api, data) => {
 	return new Promise((resolve, reject) => {
 		axios
-			.post(`${api}`, data, { headers: { "token": null } })
+			.post(`${api}`, data,)
 			.then(response => {
 				resolve(response);
 			})

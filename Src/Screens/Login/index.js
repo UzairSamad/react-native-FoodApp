@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator
 } from 'react-native';
 import Styles from './Styles';
 import { createResource } from '../../WebApiServices/SimpleApiCalls'
@@ -32,7 +33,9 @@ class Login extends Component {
       email: '',
       password: '',
       loggedIn: false,
-      userInfo: ""
+      userInfo: "",
+      isLoading: false
+
     };
   }
 
@@ -113,12 +116,18 @@ class Login extends Component {
       if (email === '' || password === '') {
         alert('Email and password is required');
       } else {
+        this.setState({ ...this.state, isLoading: true })
+
         try {
           let res = await createResource(user_login, data);
           console.log(res, 'resresres');
           this.props.navigation.navigate('NewEntry');
+          this.setState({ ...this.state, isLoading: false })
+
         } catch (error) {
           alert(error);
+          this.setState({ ...this.state, isLoading: false })
+
         }
       }
 
@@ -143,12 +152,22 @@ class Login extends Component {
                 style={Styles.input}
                 value={this.state.password}
                 onChangeText={text => this.setState({ password: text })}
+                secureTextEntry={true}
               />
-              <TouchableOpacity onPress={() => handleLogin()}>
-                <View style={Styles.button}>
-                  <Text style={Styles.buttonText}>Log In</Text>
+
+              {!this.state.isLoading ?
+                <TouchableOpacity onPress={() => handleLogin()}>
+                  <View style={Styles.button}>
+                    <Text style={Styles.buttonText}>Log In</Text>
+                  </View>
+                </TouchableOpacity>
+                :
+                <View style={Styles.loader}>
+                  <ActivityIndicator size="large" color="#0000ff" />
                 </View>
-              </TouchableOpacity>
+              }
+
+
 
               <TouchableOpacity onPress={() => { this.props.navigation.navigate('Register') }}>
                 <Text style={Styles.buttonText1}>New User Click Here</Text>

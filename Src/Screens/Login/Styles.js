@@ -11,6 +11,24 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center'
   },
+  loader: {
+    marginTop: 20,
+    width: 80,
+    height: 30,
+    backgroundColor: Colors.White,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    // elevation: 5,
+  },
   headerText: {
     marginTop: '20%',
     fontSize: 30,

@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   inputText1: {
     fontSize: 16,
     fontWeight: '500',
-    marginTop: 20
+    marginTop: 10
   },
   button: {
     marginTop: 20,
@@ -64,12 +64,30 @@ const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  loader: {
+    marginTop: 20,
+    width: 80,
+    height: 30,
+    backgroundColor: Colors.White,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    // elevation: 5,
+  },
   buttonText: {
     fontSize: 14,
     fontWeight: '600'
   },
   buttonText1: {
-    marginTop: 30,
+    marginTop: 15,
     alignSelf: 'flex-end',
     fontSize: 14,
     fontWeight: '600',
