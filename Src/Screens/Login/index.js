@@ -112,6 +112,7 @@ class Login extends Component {
     const { email, password } = this.state
 
     const handleLogin = async () => {
+      // this.props.navigation.navigate('NewEntry');
       let data = { email, password }
       if (email === '' || password === '') {
         alert('Email and password is required');
@@ -130,7 +131,6 @@ class Login extends Component {
 
         }
       }
-
     }
     return (
       <>
@@ -166,8 +166,6 @@ class Login extends Component {
                   <ActivityIndicator size="large" color="#0000ff" />
                 </View>
               }
-
-
 
               <TouchableOpacity onPress={() => { this.props.navigation.navigate('Register') }}>
                 <Text style={Styles.buttonText1}>New User Click Here</Text>

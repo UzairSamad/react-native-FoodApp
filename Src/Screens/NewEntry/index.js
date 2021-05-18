@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import Styles from './Styles';
 import Colors from '../../Styles/Colors';
@@ -16,6 +18,9 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import { createResource, getResource } from '../../WebApiServices/SimpleApiCalls';
 import { add_diet, get_diet } from '../../WebApiServices/WebServices';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from "react-native-modal-datetime-picker";
+import moment from 'moment'
 class NewEntry extends Component {
   constructor(props) {
     super(props);
@@ -23,12 +28,34 @@ class NewEntry extends Component {
       userName: '',
       consumedCalorie: '',
       changed: 0,
+      loading: false,
       foodType: '',
       description: '',
-      date: '09-10-2020',
+      date: moment(new Date()).format("DD-MM-YYYY"),
       showEntry: false,
       foodData: [],
+      selected: "",
+      isDateTimePickerVisible: false
     };
+  }
+
+  componentDidMount() {
+    this.callApi()
+  }
+
+  callApi = async () => {
+    this.setState({ loading: true })
+    try {
+      let res = await getResource(get_diet);
+      console.log(res.data, 'resDiet-->');
+      this.setState({ foodData: res.data });
+      this.setState({ loading: false })
+      console.log('foodData-->', this.state.foodData);
+    } catch (error) {
+      this.setState({ loading: false })
+      alert('Cannot Find data');
+    }
+
   }
 
   changedValues = async (value) => {
@@ -53,20 +80,39 @@ class NewEntry extends Component {
     this.setState({ showEntry: !this.state.showEntry });
   }
 
+  handleDatePicked = date => {
+    console.log("A date has been picked: ", date);
+    let datxxx = moment(date).format("DD-MM-YYYY")
+    this.setState({ date: datxxx })
+    this.hideDateTimePicker();
+  };
+
+  hideDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: false });
+  };
+
+  showDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: true });
+  };
+
 
   render() {
     const { changed, date, showEntry, description, foodType, consumedCalorie, foodData } = this.state;
 
     const handleSubmit = async () => {
-      if (foodType === '' || consumedCalorie === '' || foodType === '' || description === '') {
+      if (foodType === '' || consumedCalorie === '' || description === '') {
         alert('cannot submit empty fields');
       } else {
+        console.log(data, 'DAAAAAAAAAAAAAAAAAAAAAAAAAA');
         let data = { foodType, description, date, consumedCalorie };
         try {
           let res = await createResource(add_diet, data);
           console.log(res, 'resDiet-->');
+          alert("Diet added successfully")
+          this.setState({ date: "", foodType: "", consumedCalorie: "", description:""})
         } catch (error) {
           alert('Invalid data');
+          alert("Error adding Diet")
         }
       }
     };
@@ -77,6 +123,15 @@ class NewEntry extends Component {
       'Dinner',
       'Snacks',
     ];
+
+    console.log(this.state.selected, new Date(), "SELACCCCCCCCCCC");
+
+    if (this.state.loading) {
+      return (<View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>
+        <ActivityIndicator color="green" size="large" />
+      </View>
+      )
+    }
 
     return (
       <>
@@ -138,51 +193,33 @@ class NewEntry extends Component {
                 changed === 0 &&
                 <Text style={Styles.headerText1}>Enter Intake Information</Text>
               }
-              {
+              {/* {
                 changed === 1 && showEntry ? <Text style={Styles.headerText1}>Entry's Detail</Text>
                   : <Text style={Styles.headerText1}>Search Entries</Text>
-              }
+              } */}
               {
                 changed === 0 &&
 
                 <View style={Styles.mainInputWrapper}>
                   {/* 1st */}
                   <Text style={Styles.inputText}>Food Type</Text>
-                  <ModalDropdown
-                    style={{
-                      width: '100%',
-                      paddingLeft: 12,
-                      alignSelf: 'center',
-                      paddingVertical: 10,
-                      backgroundColor: '#fff',
-                      marginTop: 15,
-                      borderRadius: 7,
-                      borderWidth: 2,
-                      // height: 100,
+                  <Picker
+                    selectedValue={this.state.selected}
+                    onValueChange={(itemValue, itemIndex) => {
+                      console.log(itemValue, "VAAAAAAAAAAAAAAAA");
+                      this.setState({ selected: itemValue, foodType: itemValue })
                     }}
-                    defaultValue={'Select One'}
-                    textStyle={{
-                      fontSize: 15,
-                      fontWeight: '400',
-                      textAlign: 'left',
-                      color: 'black',
-                    }}
-                    dropdownTextStyle={{
-                      fontSize: 15,
-                      fontWeight: '400',
-                      color: '#000',
-                    }}
-                    dropdownStyle={{
-                      width: '90%',
-                      marginLeft: -12,
-                      marginTop: 3,
-                      borderWidth: 1,
-                      borderColor: '#e0e4e5',
-                      maxHeight: 70,
-                    }}
-                    onSelect={(index, value) => this.handleChangeFlag(value)}
-                    options={Language}
-                  />
+                    style={{marginTop:-Dimensions.get("window").height * 0.065
+                  }}
+                  >
+                    {this.state.foodData.map((data, index) => {
+                      return (
+                        <Picker.Item label={data.food_type} value={data.food_type} />
+                      )
+
+                    })
+                    }
+                  </Picker>
                   {/* 2nd */}
                   <Text style={Styles.inputText2}>Food Description</Text>
                   <TextInput
@@ -194,35 +231,14 @@ class NewEntry extends Component {
                   />
                   {/* 3rd */}
                   <Text style={Styles.inputText1}>Date of Intake</Text>
-                  <DatePicker
-                    style={Styles.datePickerStyle}
-                    date={date} // Initial date from state
-                    mode="date" // The enum of date, datetime and time
-                    placeholder="select date"
-                    value={this.state.date}
-                    format="DD-MM-YYYY"
-                    minDate="01-01-2016"
-                    maxDate="01-12-2021"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                      dateInput: {
-                        borderWidth: 2,
-                        borderColor: Colors.black,
-                        borderRadius: 8,
-                      },
-                      dateIcon: {
-                        //display: 'none',
-                        position: 'relative',
-                        right: 0,
-                        top: 0,
-                        // marginLeft: 0,
-                      },
-
-                    }}
-                    onDateChange={() => {
-                      this.setState({ date: date });
-                    }}
+                  <TouchableOpacity style={{ backgroundColor: "green", paddingVertical: 10 }} onPress={this.showDateTimePicker}>
+                    <Text style={{ textAlign: "center", fontSize: 16, color: "white" }}>Select Date</Text>
+                  </TouchableOpacity>
+                  <Text style={{ marginTop: 2 }}>Selected Date : {this.state.date}</Text>
+                  <DateTimePicker
+                    isVisible={this.state.isDateTimePickerVisible}
+                    onConfirm={this.handleDatePicked}
+                    onCancel={this.hideDateTimePicker}
                   />
 
                   {/* last */}

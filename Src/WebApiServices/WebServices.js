@@ -4,7 +4,7 @@ export const authenticateClientBeforeLogin = `${baseUrl}/authenticate`;
 
 // AUTH API
 export const user_register = `${baseUrl}/user/create`;
-export const user_login = `${baseUrl}/user/login`;
+export const user_login = `${baseUrl}/auth/login`;
 
 
 // food_diet apis

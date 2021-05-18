@@ -22,13 +22,13 @@ class Register extends Component {
       email: '',
       password: '',
       c_password: '',
-      phoneNumber:'',
-      name:'',
+      phoneNumber: '',
+      name: '',
       isLoading: false
     };
   }
   render() {
-    const { email, password, c_password,name,phoneNumber } = this.state
+    const { email, password, c_password, name, phoneNumber } = this.state
 
     const handleRegister = async () => {
       if (email == '' || password == '') {
@@ -38,7 +38,7 @@ class Register extends Component {
       }
       else {
         this.setState({ ...this.state, isLoading: true })
-        let data = { email, password ,name,phoneNumber,roleId:'2' };
+        let data = { email, password, UserName: name, phoneNumber, roleId: '2' };
         try {
           let res = await createResource(user_register, data);
           console.log(res, 'resresres');
@@ -106,7 +106,7 @@ class Register extends Component {
 
                 :
                 <View style={Styles.loader}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                  <ActivityIndicator size="large" color="#0000ff" />
                 </View>
               }
 
