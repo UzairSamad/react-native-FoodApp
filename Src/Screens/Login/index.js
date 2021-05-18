@@ -19,6 +19,12 @@ import {
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 
+GoogleSignin.configure({
+  offlineAccess: true,
+  webClientId: '511904394775-amnbvjg82i1cn4egofefdkh41neso1dv.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+});
+
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -31,9 +37,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    GoogleSignin.configure({
-      androidClientId: '672338712989-h2s9ncdd3rbdrlud9ph4q8u1mq20nn63.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
-    });
+
 
   }
 
@@ -80,19 +84,22 @@ class Login extends Component {
   loginWithGmail = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo, "USERRRRRRRRRRRRRRRRRRRRR");
+      const { accessToken, idToken } = await GoogleSignin.signIn();
+      setloggedIn(true);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
+        alert('Cancel');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
+        alert('Signin in progress');
+        // operation (f.e. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        alert('PLAY_SERVICES_NOT_AVAILABLE');
         // play services not available or outdated
       } else {
+        console.log(error, "OTHER ERRRRRRRRRRRRRRRRRR");
+        alert(JSON.stringify(error))
         // some other error happened
-        console.log(error,"ERRRRRRRRRRRRRRRRRRRRRRR");
-        alert("other error")
       }
     }
 

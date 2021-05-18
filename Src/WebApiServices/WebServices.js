@@ -1,9 +1,9 @@
-const baseUrl = 'http://sfreshveg.apishub.xyz'
+const baseUrl = 'http://auth.suretostop.com/api'
 // clientAuthenticationbeforelogin
 export const authenticateClientBeforeLogin = `${baseUrl}/authenticate`;
 
 // AUTH API
-export const user_register = `${baseUrl}/foodmanager/signup`;
+export const user_register = `${baseUrl}/user/create`;
 export const user_login = `${baseUrl}/foodmanager/loginUser`;
 
 
