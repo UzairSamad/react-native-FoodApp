@@ -1,4 +1,4 @@
-const baseUrl = 'http://auth.suretostop.com/api'
+const baseUrl = 'https://auth.suretostop.com/api'
 // clientAuthenticationbeforelogin
 export const authenticateClientBeforeLogin = `${baseUrl}/authenticate`;
 

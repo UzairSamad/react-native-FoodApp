@@ -128,7 +128,7 @@ class Login extends Component {
           this.setState({ ...this.state, isLoading: false })
 
         } catch (error) {
-          alert("ERRRRRRRRRRRRRR");
+          // alert("ERRRRRRRRRRRRRR");
           this.setState({ ...this.state, isLoading: false })
 
         }
