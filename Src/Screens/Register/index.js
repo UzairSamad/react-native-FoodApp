@@ -38,12 +38,12 @@ class Register extends Component {
       }
       else {
         this.setState({ ...this.state, isLoading: true })
-        let data = { email, password, UserName: name, phoneNumber, roleId: '2' };
+        let data = { email, password, userName: name };
         try {
           let res = await createResource(user_register, data);
           console.log(res, 'resresres');
           this.setState({ ...this.state, isLoading: false })
-
+          alert("Registered Successfully")
           this.props.navigation.navigate('Login');
         } catch (error) {
           this.setState({ ...this.state, isLoading: false })

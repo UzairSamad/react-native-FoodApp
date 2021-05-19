@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   },
   headerText1: {
-    marginTop: '15%',
+    marginTop: '8%',
     fontSize: 22,
     textAlign: "center",
     fontWeight: '700',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     height: 70,
     // alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   searchText: {
     marginLeft: 10,
@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     fontWeight: '500',
-    marginTop: 8
   },
   entryContainer: {
     width: '100%',

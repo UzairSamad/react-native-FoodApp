@@ -11,6 +11,7 @@ import {
   TextInput,
   ActivityIndicator,
   Dimensions,
+  Linking,
 } from 'react-native';
 import Styles from './Styles';
 import Colors from '../../Styles/Colors';
@@ -21,6 +22,14 @@ import { add_diet, get_diet } from '../../WebApiServices/WebServices';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from 'moment'
+
+const data = [
+  { name: "" },
+  { name: "Breakfast" },
+  { name: "Dinner" },
+  { name: "Lunch" },
+  { name: "Snacks" }
+]
 class NewEntry extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +44,9 @@ class NewEntry extends Component {
       showEntry: false,
       foodData: [],
       selected: "",
-      isDateTimePickerVisible: false
+      isDateTimePickerVisible: false,
+      searchValue: "",
+      selectedEntry: ""
     };
   }
 
@@ -53,7 +64,7 @@ class NewEntry extends Component {
       console.log('foodData-->', this.state.foodData);
     } catch (error) {
       this.setState({ loading: false })
-      alert('Cannot Find data');
+      console.log("Cnot find data");
     }
 
   }
@@ -76,8 +87,8 @@ class NewEntry extends Component {
   handleChangeFlag = (selectedOption) => {
     this.setState({ foodType: selectedOption });
   }
-  entryDetails = () => {
-    this.setState({ showEntry: !this.state.showEntry });
+  entryDetails = (item) => {
+    this.setState({ showEntry: !this.state.showEntry, selectedEntry: item });
   }
 
   handleDatePicked = date => {
@@ -109,14 +120,14 @@ class NewEntry extends Component {
           let res = await createResource(add_diet, data);
           console.log(res, 'resDiet-->');
           alert("Diet added successfully")
-          this.setState({ date: "", foodType: "", consumedCalorie: "", description:""})
+          this.setState({ date: "", foodType: "", consumedCalorie: "", description: "" })
         } catch (error) {
           alert('Invalid data');
           alert("Error adding Diet")
         }
       }
     };
-
+    console.log(this.state.selectedEntry, "selectedEntryselectedEntryselectedEntryselectedEntry");
     const Language = [
       'Breakfast',
       'Lunch',
@@ -132,6 +143,9 @@ class NewEntry extends Component {
       </View>
       )
     }
+
+    const results = foodData.filter(item => item.food_type.toLowerCase().includes(this.state.searchValue.toLowerCase()))
+    console.log(results, "RESULTTTTTTTTTTTTTTTTTTT");
 
     return (
       <>
@@ -193,28 +207,42 @@ class NewEntry extends Component {
                 changed === 0 &&
                 <Text style={Styles.headerText1}>Enter Intake Information</Text>
               }
-              {/* {
-                changed === 1 && showEntry ? <Text style={Styles.headerText1}>Entry's Detail</Text>
+              {
+                changed === 0 ? null
                   : <Text style={Styles.headerText1}>Search Entries</Text>
-              } */}
+              }
+              {
+                changed === 0 ? null :
+                  <View style={{ borderWidth: 1, marginTop: 10 }}>
+                    <TextInput
+                      placeholder="Search Here"
+                      value={this.state.searchValue}
+                      onChangeText={(text) => this.setState({ searchValue: text })}
+                    />
+                  </View>
+              }
+
               {
                 changed === 0 &&
 
                 <View style={Styles.mainInputWrapper}>
                   {/* 1st */}
-                  <Text style={Styles.inputText}>Food Type</Text>
-                  <Picker
+                  {this.state.foodType != "" ?
+                    null :
+                    <Text style={Styles.inputText}>Food Type</Text>}
+                  < Picker
                     selectedValue={this.state.selected}
                     onValueChange={(itemValue, itemIndex) => {
                       console.log(itemValue, "VAAAAAAAAAAAAAAAA");
                       this.setState({ selected: itemValue, foodType: itemValue })
                     }}
-                    style={{marginTop:-Dimensions.get("window").height * 0.065
-                  }}
+                    style={{
+                      marginTop: -Dimensions.get("window").height * 0.065
+                    }}
                   >
-                    {this.state.foodData.map((data, index) => {
+                    {data.map((dataxxxx, index) => {
                       return (
-                        <Picker.Item label={data.food_type} value={data.food_type} />
+                        <Picker.Item label={dataxxxx.name} value={dataxxxx.name} />
                       )
 
                     })
@@ -262,16 +290,16 @@ class NewEntry extends Component {
                     <View style={Styles.mainInputWrapper}>
                       <View style={Styles.entryContainer}>
                         <View style={Styles.entryWrapper}>
-                          <Text style={Styles.entryText}>Consumed Colory: 44</Text>
-                          <Text style={Styles.entryText}>On Dated: __/__/____</Text>
-                          <Text style={Styles.entryText}>Food Type: _________</Text>
+                          <Text style={Styles.entryText}>Consumed Colory: {this.state.selectedEntry.consumed_calorie}</Text>
+                          <Text style={Styles.entryText}>On Dated: {this.state.selectedEntry.date}</Text>
+                          <Text style={Styles.entryText}>Food Type: {this.state.selectedEntry.food_type}</Text>
 
                           <Text style={Styles.entryText}>Food Description</Text>
 
-                          <Text style={Styles.entryTextDescription}>Use sensory words – such as “fiery,” ”savory” and “crispy” – to describe your dishes. People are driven by their senses, and by using simple yet tantalizing terms that speak to the each of the five senses, you paint a clear picture of what diners can expect from the dish.</Text>
+                          <Text style={Styles.entryTextDescription}>{this.state.selectedEntry.description}</Text>
 
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate(''); }}>
+                        <TouchableOpacity onPress={() => { Linking.openURL(`whatsapp://send?text=Name of the food is ${this.state.selectedEntry.food_type}.Download App For More Information by given link..  www.google.com`) }}>
                           <View style={[Styles.button, { marginRight: 10 }]}>
                             <Text style={Styles.buttonTextSubmit}>Share</Text>
                           </View>
@@ -281,15 +309,17 @@ class NewEntry extends Component {
                           <Text style={Styles.buttonText1}>Go Back</Text>
                         </TouchableOpacity>
                       </View>
-
                     </View>
                     :
-                    foodData ?
-                      foodData.map((val) => (
-                        <TouchableOpacity onPress={() => this.entryDetails()}>
+                    results ?
+                      results.map((val) => (
+                        <TouchableOpacity onPress={() => this.entryDetails(val)}>
                           <View style={Styles.searchWrapper}>
-                            <Text style={Styles.searchText}>calory:{val.consumed_calorie}</Text>
-                            <Text style={Styles.searchText1}>date:{val.date}</Text>
+                            <View style={{ marginVertical: 10 }}>
+                              <Text style={Styles.searchText}>Type: {val.food_type}</Text>
+                              <Text style={Styles.searchText}>calories: {val.consumed_calorie}</Text>
+                              <Text style={Styles.searchText1}>date: {val.date}</Text>
+                            </View>
                           </View>
                         </TouchableOpacity>
                       ))
@@ -297,8 +327,8 @@ class NewEntry extends Component {
                       <View style={Styles.mainInputWrapper}>
                         <TouchableOpacity onPress={() => this.entryDetails()}>
                           <View style={Styles.searchWrapper}>
-                            <Text style={Styles.searchText}>Consumed Colory: 44</Text>
-                            <Text style={Styles.searchText1}>On Dated: __/__/____</Text>
+                            <Text style={Styles.searchText}>Consumed Colory: {this.state.selectedEntry.consumed_calorie}</Text>
+                            <Text style={Styles.searchText1}>On Dateddddd: __/__/____</Text>
                           </View>
                         </TouchableOpacity>
                       </View>

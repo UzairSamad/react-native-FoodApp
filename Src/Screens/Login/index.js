@@ -115,24 +115,24 @@ class Login extends Component {
 
     const handleLogin = async () => {
       this.props.navigation.navigate('NewEntry');
-      // let data = { email, password }
-      // if (email === '' || password === '') {
-      //   alert('Email and password is required');
-      // } else {
-      //   this.setState({ ...this.state, isLoading: true })
+      let data = { email, password }
+      if (email === '' || password === '') {
+        alert('Email and password is required');
+      } else {
+        this.setState({ ...this.state, isLoading: true })
 
-      //   try {
-      //     let res = await createResource(user_login, data);
-      //     console.log(res, 'resresres');
-      //     this.props.navigation.navigate('NewEntry');
-      //     this.setState({ ...this.state, isLoading: false })
+        try {
+          let res = await createResource(user_login, data);
+          console.log(res, 'resresres');
+          this.props.navigation.navigate('NewEntry');
+          this.setState({ ...this.state, isLoading: false })
 
-      //   } catch (error) {
-      //     alert("ERRRRRRRRRRRRRR");
-      //     this.setState({ ...this.state, isLoading: false })
+        } catch (error) {
+          alert("ERRRRRRRRRRRRRR");
+          this.setState({ ...this.state, isLoading: false })
 
-      //   }
-      // }
+        }
+      }
     }
     return (
       <>
@@ -179,11 +179,7 @@ class Login extends Component {
                 style={{ backgroundColor: "#5890FF", width: 250, borderRadius: 5, paddingHorizontal: 30, paddingVertical: 15 }}>
                 <Text style={{ fontSize: 16, color: "white", textAlign: "center" }}>Login With Facebook</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={this.loginWithGmail}
-                style={{ marginTop: 30, width: 250, backgroundColor: "#4285f4", borderRadius: 5, paddingHorizontal: 30, paddingVertical: 15 }}>
-                <Text style={{ fontSize: 16, color: "white", textAlign: "center" }}>Login With Gmail</Text>
-              </TouchableOpacity>
+
             </View>
 
           </View>
