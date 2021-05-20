@@ -39,6 +39,9 @@ class Register extends Component {
       else if (email.length < 10){
         alert("Email Must be atleast of 10 character")
       }
+      else if(password.length < 6){
+        alert("Password must be atleast of 6 digits")
+      }
       else {
         this.setState({ ...this.state, isLoading: true })
         let data = { email, password, userName: name };

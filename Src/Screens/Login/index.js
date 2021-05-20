@@ -118,7 +118,9 @@ class Login extends Component {
       let data = { email, password }
       if (email === '' || password === '') {
         alert('Email and password is required');
-      } else {
+      }
+
+      else {
         this.setState({ ...this.state, isLoading: true })
         try {
           let res = await createResource(user_login, data);
