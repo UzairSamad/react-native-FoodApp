@@ -114,21 +114,19 @@ class Login extends Component {
     const { email, password } = this.state
 
     const handleLogin = async () => {
-      this.props.navigation.navigate('NewEntry');
+      // this.props.navigation.navigate('NewEntry');
       let data = { email, password }
       if (email === '' || password === '') {
         alert('Email and password is required');
       } else {
         this.setState({ ...this.state, isLoading: true })
-
         try {
           let res = await createResource(user_login, data);
           console.log(res, 'resresres');
           this.props.navigation.navigate('NewEntry');
           this.setState({ ...this.state, isLoading: false })
-
         } catch (error) {
-          // alert("ERRRRRRRRRRRRRR");
+          alert(error.response.data.message);
           this.setState({ ...this.state, isLoading: false })
 
         }

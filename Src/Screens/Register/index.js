@@ -36,6 +36,9 @@ class Register extends Component {
       } else if (password !== c_password) {
         alert('Password and Confirm Password should be same')
       }
+      else if (email.length < 10){
+        alert("Email Must be atleast of 10 character")
+      }
       else {
         this.setState({ ...this.state, isLoading: true })
         let data = { email, password, userName: name };

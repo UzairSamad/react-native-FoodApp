@@ -78,7 +78,6 @@ class NewEntry extends Component {
         this.setState({ foodData: res.data });
         console.log('foodData-->', this.state.foodData);
       } catch (error) {
-        alert('Cannot Find data');
       }
     }
 
